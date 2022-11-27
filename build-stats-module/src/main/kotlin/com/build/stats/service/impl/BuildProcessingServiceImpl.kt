@@ -14,6 +14,7 @@ import com.build.stats.model.RepoConfig.Companion.DEFAULT_BUILD_TIMEOUT
 import com.build.stats.model.TagToBuildLink
 import com.build.stats.service.BuildNtfSendingService
 import com.build.stats.service.BuildProcessingService
+import com.build.stats.service.BuildStatsAggregatorService
 import com.build.stats.utils.orElse
 import com.build.stats.utils.retrieveRequired
 import com.build.stats.vo.StartBuildRq
@@ -27,6 +28,7 @@ import java.util.concurrent.ConcurrentHashMap
 
 @Service
 class BuildProcessingServiceImpl @Autowired constructor(
+    private val buildStatsAggregatorService: BuildStatsAggregatorService,
     private val buildNtfSendingService: BuildNtfSendingService,
     private val buildStageHistoryDao: BuildStageHistoryDao,
     private val tagToBuildLinkDao: TagToBuildLinkDao,
@@ -78,6 +80,35 @@ class BuildProcessingServiceImpl @Autowired constructor(
         )
     }
 
+    override fun terminateBuild(buildToken: String, status: BuildStatus) = runWithTimestamp { now ->
+        val build = buildDao.findByToken(buildToken)
+            .retrieveRequired {
+                "Token \"${buildToken}\" is not associated with an existing build"
+            }.also {
+                validateBuild(it, now)
+            }
+
+        require(status.terminal) {
+            "Only terminal status can be used to update build, but $status provided"
+        }
+
+        require(status !in listOf(BuildStatus.APP_ERROR, BuildStatus.TIMEOUT)) {
+            "$status is a system one, which cannot be used by users!"
+        }
+
+        build.apply {
+            this.status = status
+            this.finished = now
+        }
+
+        buildDao.save(build)
+        timeoutCache.remove(build.token)
+
+        terminateCurrentStage(build, now)
+        buildNtfSendingService.sendBuildUpdateMessageToQueue(build.id, status)
+        buildStatsAggregatorService.addBuildToStats(build)
+    }
+
     override fun startStage(buildToken: String, stageCode: String) = runWithTimestamp { now ->
         val build = buildDao.findByToken(buildToken).retrieveRequired {
             "Token \"${buildToken}\" is not associated with an existing build"
@@ -100,6 +131,15 @@ class BuildProcessingServiceImpl @Autowired constructor(
             )
         )
         buildNtfSendingService.sendBuildUpdateMessageToQueue(build.id, build.status, newStage.id)
+    }
+
+    @Scheduled(fixedRate = TIMEOUT_PROCESSING_RATE)
+    override fun pollTimeoutBuilds() = runWithTimestamp { now ->
+        val localCacheCopy = ArrayList(timeoutCache.values)
+        localCacheCopy.removeIf { !it.isTimeout(now) }
+        localCacheCopy.forEach {
+            terminateBuild(it.token, BuildStatus.TIMEOUT)
+        }
     }
 
     private fun validateBuild(build: Build, now: LocalDateTime) {
@@ -149,5 +189,7 @@ class BuildProcessingServiceImpl @Autowired constructor(
 
     companion object {
         const val LINK_TEMPLATE = "%s/runs/%s"
+
+        const val TIMEOUT_PROCESSING_RATE = 60 * 1000L
     }
 }

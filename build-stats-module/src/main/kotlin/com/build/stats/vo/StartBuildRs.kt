@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 /**
  * VO object, which is used both to create a new [Build].
  * [repoToken] is considered to be required, other elements are optional.
+ * @author shvatov
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class StartBuildRs @JsonCreator constructor(

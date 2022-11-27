@@ -8,4 +8,9 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface TagToBuildLinkDao : JpaRepository<TagToBuildLink, Long> {
+    /**
+     * Finds all [TagToBuildLink] entities by [buildId].
+     */
+    @Query(value = "select e from TagToBuildLink e where e._buildId = ?1")
+    fun findAllByBuild(buildId: Long): List<TagToBuildLink>
 }

@@ -50,4 +50,17 @@ class BuildController @Autowired constructor(
             buildProcessingService.startStage(buildToken, stageCode)
         }
     }
+
+    /**
+     * Updates the [buildStatus] of the [Build] with [buildToken].
+     */
+    @PostMapping(value = ["/terminate"])
+    fun updateBuild(
+        @RequestParam("buildToken") buildToken: String,
+        @RequestParam("status") buildStatus: BuildStatus
+    ): ResponseEntity<Unit> {
+        return ResponseEntity.ok(Unit).also {
+            buildProcessingService.terminateBuild(buildToken, buildStatus)
+        }
+    }
 }
