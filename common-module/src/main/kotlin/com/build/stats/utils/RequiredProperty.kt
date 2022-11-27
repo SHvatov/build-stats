@@ -22,7 +22,7 @@ class RequiredProperty<T : Any, V : Any>(
         if (mandatory) {
             throw IllegalStateException(
                 "Access default value provider" +
-                    " while property is marked as mandatory"
+                        " while property is marked as mandatory"
             )
         }
         defaultValueProvider!!()

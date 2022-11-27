@@ -19,6 +19,7 @@
 
     <modules>
         <module>common-module</module>
+        <module>build-stats-module</module>
     </modules>
 
     <properties>
