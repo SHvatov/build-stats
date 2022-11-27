@@ -14,24 +14,18 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
+
       - name: Build with Maven
         run: mvn clean install
 
-  release-artifacts:
-    needs: build-maven
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Build
+      - name: Build Release.txt
         run: echo ${{ github.sha }} > Release.txt
-      - name: Test
-        run: cat Release.txt
-      - name: Release
+
+      - name: Add files to latest release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: latest
           files: |
             Release.txt
-            common-module-0.0.1-SNAPSHOT.jar
+            *.jar
 
