@@ -2,15 +2,7 @@ package com.build.stats.model
 
 import com.build.stats.utils.RequiredProperty
 import java.time.LocalDateTime
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.EnumType
-import javax.persistence.Enumerated
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
-import javax.persistence.Table
-import javax.persistence.Transient
+import javax.persistence.*
 
 private const val TABLE_NAME = "gh_build_stage_history"
 
@@ -54,7 +46,10 @@ class BuildStageHistory @JvmOverloads constructor(
 
     @delegate:Transient
     @Suppress("JpaAttributeTypeInspection")
-    var stageStatus: BuildStageStatus by RequiredProperty<BuildStageHistory, BuildStageStatus>(this::_stageStatus, mandatory = true)
+    var stageStatus: BuildStageStatus by RequiredProperty<BuildStageHistory, BuildStageStatus>(
+        this::_stageStatus,
+        mandatory = true
+    )
 
     @field:Column(name = "started")
     private var _started: LocalDateTime? = started
