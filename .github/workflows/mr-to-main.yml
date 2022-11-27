@@ -1,8 +1,7 @@
 name: Build and test the code on PR
 on:
   pull_request:
-    types:
-      - opened, edited
+    branches: [ main ]
 
 jobs:
   build-maven:
