@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+    <changeSet id="1" author="shvatov">
+        <createSequence sequenceName="hibernate_sequence"
+                        incrementBy="1"
+                        startValue="1"/>
+    </changeSet>
+
+    <changeSet id="2" author="shvatov">
+        <createTable tableName="gh_user">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="username" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+            <column name="token" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="gh_user" columnNames="id"/>
+        <addUniqueConstraint tableName="gh_user" columnNames="email"/>
+    </changeSet>
+
+    <changeSet id="3" author="shvatov">
+        <createTable tableName="gh_repository">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="varchar">
+                <constraints nullable="true"/>
+            </column>
+            <column name="description" type="varchar">
+                <constraints nullable="true"/>
+            </column>
+            <column name="link" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+            <column name="token" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+            <column name="build_stats_id" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="gh_repository" columnNames="id"/>
+        <addUniqueConstraint tableName="gh_repository" columnNames="token"/>
+    </changeSet>
+
+    <changeSet id="4" author="shvatov">
+        <createTable tableName="gh_repo_build_stats">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="repo_id" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="avg_time" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="max_time" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="min_time" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="total_cnt" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="failed_cnt" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="contributors" type="varchar">
+                <constraints nullable="true"/>
+            </column>
+            <column name="tags" type="varchar">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="gh_repo_build_stats" columnNames="id"/>
+    </changeSet>
+
+    <changeSet id="5" author="shvatov">
+        <addForeignKeyConstraint baseColumnNames="repo_id"
+                                 baseTableName="gh_repo_build_stats"
+                                 constraintName="fk_grbs_repo_link"
+                                 onDelete="CASCADE"
+                                 referencedColumnNames="id"
+                                 referencedTableName="gh_repository"
+                                 validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="build_stats_id"
+                                 baseTableName="gh_repository"
+                                 constraintName="fk_gr_stats_link"
+                                 onDelete="CASCADE"
+                                 referencedColumnNames="id"
+                                 referencedTableName="gh_repo_build_stats"
+                                 validate="true"/>
+    </changeSet>
+
+    <changeSet id="6" author="shvatov">
+        <createTable tableName="gh_user_repo_link">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="repo_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="gh_user_repo_link" columnNames="id"/>
+        <addForeignKeyConstraint baseColumnNames="user_id"
+                                 baseTableName="gh_user_repo_link"
+                                 constraintName="fk_gurl_user_link"
+                                 onDelete="CASCADE"
+                                 referencedColumnNames="id"
+                                 referencedTableName="gh_user"
+                                 validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="repo_id"
+                                 baseTableName="gh_user_repo_link"
+                                 constraintName="fk_gurl_repo_linko"
+                                 onDelete="CASCADE"
+                                 referencedColumnNames="id"
+                                 referencedTableName="gh_repository"
+                                 validate="true"/>
+    </changeSet>
+
+    <changeSet id="7" author="shvatov">
+        <createTable tableName="gh_tag">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="code" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="varchar">
+                <constraints nullable="true"/>
+            </column>
+            <column name="description" type="varchar">
+                <constraints nullable="true"/>
+            </column>
+            <column name="repo_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="gh_tag" columnNames="id"/>
+        <addForeignKeyConstraint baseColumnNames="repo_id"
+                                 baseTableName="gh_tag"
+                                 constraintName="fk_gt_repo_link"
+                                 onDelete="CASCADE"
+                                 referencedColumnNames="id"
+                                 referencedTableName="gh_repository"
+                                 validate="true"/>
+        <addUniqueConstraint tableName="gh_tag" columnNames="code,repo_id"/>
+    </changeSet>
+
+    <changeSet id="8" author="shvatov">
+        <createTable tableName="gh_build">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="repo_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="started" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="finished" type="datetime">
+                <constraints nullable="true"/>
+            </column>
+            <column name="status" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creator" type="varchar">
+                <constraints nullable="true"/>
+            </column>
+            <column name="name" type="varchar">
+                <constraints nullable="true"/>
+            </column>
+            <column name="description" type="varchar">
+                <constraints nullable="true"/>
+            </column>
+            <column name="link" type="varchar">
+                <constraints nullable="true"/>
+            </column>
+            <column name="token" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="gh_build" columnNames="id"/>
+        <addForeignKeyConstraint baseColumnNames="repo_id"
+                                 baseTableName="gh_build"
+                                 constraintName="fk_gb_repo_link"
+                                 onDelete="CASCADE"
+                                 referencedColumnNames="id"
+                                 referencedTableName="gh_repository"
+                                 validate="true"/>
+        <addUniqueConstraint tableName="gh_build" columnNames="token"/>
+    </changeSet>
+
+    <changeSet id="9" author="shvatov">
+        <createTable tableName="gh_tag_build_link">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tag_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="build_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="gh_tag_build_link" columnNames="id"/>
+        <addForeignKeyConstraint baseColumnNames="build_id"
+                                 baseTableName="gh_tag_build_link"
+                                 constraintName="fk_gtbl_build_link"
+                                 onDelete="CASCADE"
+                                 referencedColumnNames="id"
+                                 referencedTableName="gh_build"
+                                 validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="tag_id"
+                                 baseTableName="gh_tag_build_link"
+                                 constraintName="fk_gtbl_tag_link"
+                                 onDelete="CASCADE"
+                                 referencedColumnNames="id"
+                                 referencedTableName="gh_tag"
+                                 validate="true"/>
+    </changeSet>
+
+    <changeSet id="10" author="shvatov">
+        <createTable tableName="gh_build_ntf_pref">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="repo_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="config" type="varchar">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="gh_build_ntf_pref" columnNames="id"/>
+        <addForeignKeyConstraint baseColumnNames="user_id"
+                                 baseTableName="gh_build_ntf_pref"
+                                 constraintName="fk_gbnp_user_link"
+                                 onDelete="CASCADE"
+                                 referencedColumnNames="id"
+                                 referencedTableName="gh_user"
+                                 validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="repo_id"
+                                 baseTableName="gh_build_ntf_pref"
+                                 constraintName="fk_gbnp_repo_link"
+                                 onDelete="CASCADE"
+                                 referencedColumnNames="id"
+                                 referencedTableName="gh_repository"
+                                 validate="true"/>
+    </changeSet>
+
+    <changeSet id="11" author="shvatov">
+        <createTable tableName="gh_ntf_types">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="gh_ntf_types" columnNames="id"/>
+    </changeSet>
+
+    <changeSet id="12" author="shvatov">
+        <createTable tableName="gh_build_stage">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="code" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="varchar">
+                <constraints nullable="true"/>
+            </column>
+            <column name="description" type="varchar">
+                <constraints nullable="true"/>
+            </column>
+            <column name="repo_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="gh_build_stage" columnNames="id"/>
+        <addForeignKeyConstraint baseColumnNames="repo_id"
+                                 baseTableName="gh_build_stage"
+                                 constraintName="fk_gbs_repo_link"
+                                 onDelete="CASCADE"
+                                 referencedColumnNames="id"
+                                 referencedTableName="gh_repository"
+                                 validate="true"/>
+        <addUniqueConstraint tableName="gh_build_stage" columnNames="code,repo_id"/>
+    </changeSet>
+
+    <changeSet id="13" author="shvatov">
+        <createTable tableName="gh_build_stage_history">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="build_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="stage_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="started" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="finished" type="datetime">
+                <constraints nullable="true"/>
+            </column>
+            <column name="status" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="gh_build_stage_history" columnNames="id"/>
+        <addForeignKeyConstraint baseColumnNames="build_id"
+                                 baseTableName="gh_build_stage_history"
+                                 constraintName="fk_gbsh_build_link"
+                                 onDelete="CASCADE"
+                                 referencedColumnNames="id"
+                                 referencedTableName="gh_build"
+                                 validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="stage_id"
+                                 baseTableName="gh_build_stage_history"
+                                 constraintName="fk_gbsh_stage_link"
+                                 onDelete="CASCADE"
+                                 referencedColumnNames="id"
+                                 referencedTableName="gh_build_stage"
+                                 validate="true"/>
+    </changeSet>
+
+    <changeSet id="14" author="shvatov">
+        <addColumn tableName="gh_ntf_types">
+            <column name="description" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="15" author="shvatov">
+        <addColumn tableName="gh_user">
+            <column name="config" type="varchar">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="16" author="shvatov">
+        <addUniqueConstraint tableName="gh_ntf_types" columnNames="type"/>
+    </changeSet>
+
+    <changeSet id="17" author="shvatov">
+        <addColumn tableName="gh_repository">
+            <column name="github_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <addUniqueConstraint tableName="gh_repository" columnNames="github_id"/>
+    </changeSet>
+
+    <changeSet id="18" author="shvatov">
+        <addColumn tableName="gh_repository">
+            <column name="config" type="varchar"/>
+        </addColumn>
+    </changeSet>
+    <!-- todo: check onDelete cascade actions -->
+</databaseChangeLog>
