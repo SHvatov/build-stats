@@ -27,5 +27,5 @@ jobs:
           tag_name: latest
           files: |
             Release.txt
-            ./common-module/*.jar
+            ./common-module/target/*.jar
 
