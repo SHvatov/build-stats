@@ -3,6 +3,9 @@ on:
   push:
     branches: [ "main" ]
 
+env:
+  REGISTRY: ghcr.io
+
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
@@ -36,9 +39,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    environment:
-      REGISTRY: ghcr.io
-      IMAGE_NAME: ${{ github.repository }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -51,16 +51,16 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract metadata (tags, labels) for Docker
-        id: meta
+        id: build_stats_meta
         uses: docker/metadata-action@v3
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ${{ env.REGISTRY }}/build-stats
 
       - name: Build and push Docker image for build-stats-module
         uses: docker/build-push-action@v3
         with:
           context: ./build-stats-module
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ steps.build_stats_meta.outputs.tags }}
+          labels: ${{ steps.build_stats_meta.outputs.labels }}
 
