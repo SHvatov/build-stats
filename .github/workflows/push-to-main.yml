@@ -15,7 +15,7 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - name: Build with Maven
-        run: mvn -B package --file pom.xml
+        run: mvn clean install
 
   release-artifacts:
     needs: build-maven
@@ -30,7 +30,7 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: latest
+          tag_name: Latest Release
           files: |
             Release.txt
             *.jar
