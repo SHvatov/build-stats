@@ -33,5 +33,5 @@ jobs:
           tag_name: latest
           files: |
             Release.txt
-            *.jar
+            common-module-0.0.1-SNAPSHOT.jar
 
