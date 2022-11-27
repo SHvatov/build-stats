@@ -18,10 +18,26 @@ interface BuildProcessingService {
     fun startBuild(buildVo: StartBuildRq): StartBuildRs
 
     /**
+     * Updates the [status] of build with provided [buildToken].
+     * Also updates the statistics and send a notification, that this
+     * build has been updated. Also finishes current stage of the build if such is present.
+     * If build is already in the terminal state, then exception is thrown.
+     */
+    @Transactional
+    fun terminateBuild(buildToken: String, status: BuildStatus)
+
+    /**
      * Starts a new stage with [stageCode] within build with [buildToken].
      * Previous stage is considered to be successfully completed. If build is
      * already in the terminal state, then exception is thrown.
      */
     @Transactional
     fun startStage(buildToken: String, stageCode: String)
+
+    /**
+     * Starts a scheduler, which will be checking registered
+     * builds if the have failed due to timeout.
+     */
+    @Transactional
+    fun pollTimeoutBuilds()
 }
