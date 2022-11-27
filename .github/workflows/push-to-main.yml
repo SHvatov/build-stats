@@ -18,6 +18,7 @@ jobs:
         run: mvn -B package --file pom.xml
 
   release-artifacts:
+    needs: build-maven
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -29,6 +30,7 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
+          tag_name: latest
           files: |
             Release.txt
             *.jar
