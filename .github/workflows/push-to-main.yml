@@ -1,4 +1,4 @@
-name: Build, Test and Publish to Docker Registry
+name: Build, Test and Publish to Releases page
 on:
   push:
     branches: [ "main" ]
@@ -17,7 +17,7 @@ jobs:
       - name: Build with Maven
         run: mvn -B package --file pom.xml
 
-  build:
+  release-artifacts:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
