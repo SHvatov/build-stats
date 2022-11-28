@@ -20,6 +20,8 @@
     <modules>
         <module>common-module</module>
         <module>build-stats-module</module>
+        <module>notifications-module</module>
+        <module>telegram-bot-module</module>
     </modules>
 
     <properties>
