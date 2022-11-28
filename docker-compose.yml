@@ -1,0 +1,49 @@
+version: '3.9'
+services:
+  postgres:
+    container_name: 'postgres'
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: 'rabbitmq'
+    ports:
+      - "5672:5672"
+
+  build-stats-service:
+    build:
+      context: .
+      dockerfile: ./build-stats-module/Dockerfile
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/postgres
+      - SPRING_RABBITMQ_HOST=rabbit
+    depends_on:
+      - postgres
+      - rabbitmq
+
+  notifications-service:
+    build:
+      context: .
+      dockerfile: ./notifications-module/Dockerfile
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/postgres
+      - SPRING_RABBITMQ_HOST=rabbit
+    depends_on:
+      - postgres
+      - rabbitmq
+
+  telegram-bot-service:
+    build:
+      context: .
+      dockerfile: ./telegram-bot-module/Dockerfile
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/postgres
+      - SPRING_RABBITMQ_HOST=rabbit
+    depends_on:
+      - postgres
+      - rabbitmq
