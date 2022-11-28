@@ -21,8 +21,8 @@ app:
   ntf-exchange: gh-ntf-exchange
 
 bot:
-  token: ${botToken}
-  username: ${botName}
+  token: ${BOT_TOKEN}
+  username: ${BOT_NAME}
 
 server:
   port: 8082

@@ -6,8 +6,8 @@ spring:
     protocol: smtps
     port: 465
     host: smtp.yandex.ru
-    username: ${mailUser}
-    password: ${mailPassword}
+    username: ${MAIL_USER}
+    password: ${MAIL_PASSWORD}
 
   liquibase:
     enabled: true
@@ -28,8 +28,8 @@ app:
   ntf-exchange: gh-ntf-exchange
 
 bot:
-  token: ${botToken}
-  username: ${botName}
+  token: ${BOT_TOKEN}
+  username: ${BOT_NAME}
 
 server:
-  port: 10000
+  port: 8081
