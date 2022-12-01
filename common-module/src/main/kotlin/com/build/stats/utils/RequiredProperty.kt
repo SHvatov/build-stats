@@ -6,7 +6,8 @@ import kotlin.reflect.KProperty
 
 /**
  * Note: needs to be annotated with @Suppress("JpaAttributeTypeInspection") due to some bug in Idea.
- * */
+ * @author shvatov
+ */
 class RequiredProperty<T : Any, V : Any>(
     private val backingProperty: KMutableProperty0<V?>,
     private val mandatory: Boolean = false,

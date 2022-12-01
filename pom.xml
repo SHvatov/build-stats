@@ -22,6 +22,7 @@
         <module>build-stats-module</module>
         <module>notifications-module</module>
         <module>telegram-bot-module</module>
+        <module>ui-module</module>
     </modules>
 
     <properties>

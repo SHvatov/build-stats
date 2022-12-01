@@ -15,4 +15,9 @@ interface RepoDao : JpaRepository<Repo, Long>, TokenAwareRepositoryExtension<Rep
     @Query(value = "select e from Repo e where e._token = ?1")
     fun findByToken(token: String): Repo?
 
+    /**
+     * Finds optional [Repo] entity by [gitHubId].
+     */
+    @Query(value = "select e from Repo e where e._gitHubId = ?1")
+    fun findByGitHubId(gitHubId: Long): Repo?
 }

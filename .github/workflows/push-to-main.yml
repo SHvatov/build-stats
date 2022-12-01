@@ -42,9 +42,11 @@ jobs:
           - dockerfile: ./build-stats-module/Dockerfile
             image: ghcr.io/SHvatov/build-stats
           - dockerfile: ./notifications-module/Dockerfile
-            image: ghcr.io/SHvatov/build-notifications
+            image: ghcr.io/SHvatov/build-stats-notifications
           - dockerfile: ./telegram-bot-module/Dockerfile
-            image: ghcr.io/SHvatov/build-telegram-bot
+            image: ghcr.io/SHvatov/build-stats-ntf-telegram-bot
+          - dockerfile: ./ui-module/Dockerfile
+            image: ghcr.io/SHvatov/build-stats-ui
     permissions:
       contents: read
       packages: write

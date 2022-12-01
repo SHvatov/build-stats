@@ -1,0 +1,13 @@
+.centered {
+    text-align: center;
+}
+
+.hover-item:hover {
+    opacity: 0.7;
+}
+
+.scrollable-list {
+    margin-bottom: 10px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
