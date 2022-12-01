@@ -47,3 +47,14 @@ services:
     depends_on:
       - postgres
       - rabbitmq
+
+  ui-service:
+    build:
+      context: .
+      dockerfile: ./ui-module/Dockerfile
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/postgres
+      - SPRING_RABBITMQ_HOST=rabbit
+    depends_on:
+      - postgres
+      - rabbitmq

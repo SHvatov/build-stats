@@ -10,4 +10,7 @@ import org.springframework.stereotype.Repository
 interface BuildNtfUserPreferencesDao : JpaRepository<BuildNtfUserPreferences, Long> {
     @Query(value = "select e from BuildNtfUserPreferences e where e._repositoryId = ?1")
     fun findByRepositoryId(repositoryId: Long): List<BuildNtfUserPreferences>
+
+    @Query(value = "select e from BuildNtfUserPreferences e where e._repositoryId = ?1 and e._userId = ?2")
+    fun findUniqueRepositoryIdAndUserId(repositoryId: Long, userId: Long): BuildNtfUserPreferences?
 }

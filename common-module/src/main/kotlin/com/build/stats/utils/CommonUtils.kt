@@ -2,6 +2,7 @@ package com.build.stats.utils
 
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.repository.findByIdOrNull
+import java.time.LocalDateTime
 
 
 /**
@@ -19,6 +20,47 @@ fun <T> T?.retrieveRequired(messageProvider: (() -> String)? = null): T {
     return this ?: throw IllegalStateException(
         messageProvider?.invoke() ?: DEFAULT_ENTITY_IS_ABSENT_MSG
     )
+}
+
+/**
+ * Returns this or throw exception if this is null. [messageProvider]
+ * can be used for specific exception message.
+ */
+@Suppress("unchecked_cast")
+fun <O, T> O?.retrieveRequiredAs(messageProvider: (() -> String)? = null): T {
+    return this as? T ?: throw IllegalStateException(
+        messageProvider?.invoke() ?: DEFAULT_ENTITY_IS_ABSENT_MSG
+    )
+}
+
+/**
+ * Returns a [page] of [pageSize] from this list or an empty list.
+ */
+fun <O, T : List<O>> T.getPage(page: Int?, pageSize: Int?): List<O> {
+    require(page != null && pageSize != null)
+    require(page > 0 && pageSize > 0)
+
+    ifEmpty { return emptyList() }
+
+    val start = (page - 1) * pageSize
+    val end = if (start + pageSize >= size) size else start + pageSize
+
+    return if (start <= end) {
+        return toList().subList(start, end)
+    } else emptyList()
+}
+
+/**
+ * Returns an interval [from]..[to].
+ */
+fun prepareInterval(from: LocalDateTime?, to: LocalDateTime?): ClosedRange<LocalDateTime> {
+    val dateFrom = from ?: LocalDateTime.MIN
+    val dateTo = to ?: LocalDateTime.MAX
+
+    require(dateFrom <= dateTo) {
+        "Incorrect date range provided: $from, $to"
+    }
+    return dateFrom..dateTo
 }
 
 /**

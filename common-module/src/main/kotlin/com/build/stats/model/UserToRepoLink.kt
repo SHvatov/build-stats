@@ -7,7 +7,8 @@ private const val TABLE_NAME = "gh_user_repo_link"
 
 /**
  * Links user and repository.
- * */
+ * @author shvatov
+ */
 @Entity
 @Table(name = TABLE_NAME)
 class UserToRepoLink @JvmOverloads constructor(
