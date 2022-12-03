@@ -424,7 +424,7 @@
 
         if (ntfPrefs) {
             $.ajax({
-                url: 'http://${BUILD_STATS_API__URL}/build/ntf/api/update/' + ntfPrefs.id,
+                url: 'http://localhost:8083/build/ntf/api/update/' + ntfPrefs.id,
                 type: 'PUT',
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
@@ -445,14 +445,14 @@
             }
 
             $.ajax({
-                url: 'http://${BUILD_STATS_API__URL}/build/ntf/api/create',
+                url: 'http://localhost:8083/build/ntf/api/create',
                 type: 'POST',
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 data: JSON.stringify(ntfPrefs),
                 success: (data) => {
                     $.ajax({
-                        url: 'http://${BUILD_STATS_API__URL}/build/ntf/api/update/' + data.id,
+                        url: 'http://localhost:8083/build/ntf/api/update/' + data.id,
                         type: 'PUT',
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
@@ -485,7 +485,7 @@
 
     $('#generate-token-btn').click(function () {
         $.ajax({
-            url: 'http://${BUILD_STATS_API__URL}/build/api/generateToken/' + repoData.id,
+            url: 'http://localhost:8083/build/api/generateToken/' + repoData.id,
             type: 'GET',
             success: function () {
                 location.reload()
@@ -538,7 +538,7 @@
         }
 
         $.ajax({
-            url: 'http://${BUILD_STATS_API__URL}/tag/api/create',
+            url: 'http://localhost:8083/tag/api/create',
             type: 'POST',
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -571,7 +571,7 @@
         }
 
         $.ajax({
-            url: 'http://${BUILD_STATS_API__URL}/stage/api/create',
+            url: 'http://localhost:8083/stage/api/create',
             type: 'POST',
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -737,7 +737,7 @@
         };
 
         $.ajax({
-            url: 'http://${BUILD_STATS_API__URL}/build/api/list?repoId=' + repoData.id,
+            url: 'http://localhost:8083/build/api/list?repoId=' + repoData.id,
             type: 'POST',
             contentType: "application/json",
             dataType: "json",

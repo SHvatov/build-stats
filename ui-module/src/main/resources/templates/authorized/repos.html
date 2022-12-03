@@ -150,7 +150,7 @@
     )
 
     $.ajax({
-        url: 'http://${BUILD_STATS_API__URL}/repo/api/list/github?userId=' + userData.id,
+        url: 'http://localhost:8083/repo/api/list/github?userId=' + userData.id,
         type: 'GET',
         success: (repos) => {
             for (let index in repos) {
@@ -191,7 +191,7 @@
         }
 
         $.ajax({
-            url: `http://${BUILD_STATS_API__URL}/repo/api/register?userId=${userData.id}&gitHubRepoId=${repoId}`,
+            url: `http://localhost:8083/repo/api/register?userId=${userData.id}&gitHubRepoId=${repoId}`,
             type: 'POST',
             success: () => {
                 location.reload();
@@ -216,7 +216,7 @@
         };
 
         $.ajax({
-            url: 'http://${BUILD_STATS_API__URL}/repo/api/list/registered?userId=' + userData.id,
+            url: 'http://localhost:8083/repo/api/list/registered?userId=' + userData.id,
             type: 'POST',
             contentType: "application/json",
             dataType: "json",
