@@ -16,12 +16,10 @@ services:
       - "5672:5672"
 
   build-stats-service:
-    build:
-      context: .
-      dockerfile: ./build-stats-module/Dockerfile
+    image: ghcr.io/shvatov/build-stats:main
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/postgres
-      - SPRING_RABBITMQ_HOST=rabbit
+      - SPRING_RABBITMQ_HOST=rabbitmq
     depends_on:
       - postgres
       - rabbitmq
@@ -29,34 +27,36 @@ services:
       - "8080:8080"
 
   notifications-service:
-    build:
-      context: .
-      dockerfile: ./notifications-module/Dockerfile
+    image: ghcr.io/shvatov/build-stats-notifications:main
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/postgres
-      - SPRING_RABBITMQ_HOST=rabbit
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - MAIL_USER=${MAIL_USER}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+      - BOT_TOKEN=${BOT_TOKEN}
+      - BOT_NAME=${BOT_NAME}
     depends_on:
       - postgres
       - rabbitmq
 
   telegram-bot-service:
-    build:
-      context: .
-      dockerfile: ./telegram-bot-module/Dockerfile
+    image: ghcr.io/shvatov/build-stats-ntf-telegram-bot:main
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/postgres
-      - SPRING_RABBITMQ_HOST=rabbit
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - BOT_TOKEN=${BOT_TOKEN}
+      - BOT_NAME=${BOT_NAME}
     depends_on:
       - postgres
       - rabbitmq
 
   ui-service:
-    build:
-      context: .
-      dockerfile: ./ui-module/Dockerfile
+    image: ghcr.io/shvatov/build-stats-ui:main
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/postgres
-      - SPRING_RABBITMQ_HOST=rabbit
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - GITHUB_APP_CLIENT_ID=${GITHUB_APP_CLIENT_ID}
+      - GITHUB_APP_CLIENT_SECRET=${GITHUB_APP_CLIENT_SECRET}
     depends_on:
       - postgres
       - rabbitmq
