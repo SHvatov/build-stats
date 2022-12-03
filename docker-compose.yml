@@ -49,6 +49,8 @@ services:
     depends_on:
       - postgres
       - rabbitmq
+    ports:
+      - "8082:8082"
 
   ui-service:
     image: ghcr.io/shvatov/build-stats-ui:main
