@@ -25,6 +25,8 @@ services:
     depends_on:
       - postgres
       - rabbitmq
+    ports:
+      - "8080:8080"
 
   notifications-service:
     build:
@@ -58,3 +60,5 @@ services:
     depends_on:
       - postgres
       - rabbitmq
+    ports:
+      - "8083:8083"

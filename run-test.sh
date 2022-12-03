@@ -1,0 +1,1 @@
+docker-compose --env-file ./.testing/local.env  up -d
